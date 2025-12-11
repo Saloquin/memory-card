@@ -1,17 +1,17 @@
 import { z } from 'zod'
 
 export const registerUserSchema = z.object({
-    nom: z.string().min(1, "Le nom est requis").max(100, "Le nom ne peut pas dépasser 100 caractères"),
-    prenom: z.string().min(1, "Le prénom est requis").max(100, "Le prénom ne peut pas dépasser 100 caractères"),
-    email: z.email("Format d'email invalide"),
-    password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères").max(100, "Le mot de passe ne peut pas dépasser 100 caractères")
+    firstName: z.string().min(1, "First name is required").max(100, "First name cannot exceed 100 characters"),
+    name: z.string().min(1, "Name is required").max(100, "Name cannot exceed 100 characters"),
+    email: z.email("Invalid email format"),
+    password: z.string().min(6, "Password must contain at least 6 characters").max(100, "Password cannot exceed 100 characters")
 })
 
 export const loginUserSchema = z.object({
-    email: z.email("Format d'email invalide"),
-    password: z.string().min(1, "Le mot de passe est requis")
+    email: z.email("Invalid email format"),
+    password: z.string().min(1, "Password is required")
 })
 
 export const userIdSchema = z.object({
-    id: z.uuid("ID utilisateur invalide")
+    id: z.uuid("Invalid user ID")
 })

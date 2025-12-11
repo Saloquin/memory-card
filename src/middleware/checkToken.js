@@ -10,7 +10,7 @@ export default function checkToken(req, res, next) {
     try {
         const payload = jwt.verify(token, secret)
         req.user = payload
-        req.isAdmin = payload.role === 'admin'
+        req.isAdmin = payload.isAdmin
         next()
     } catch (error) {
         return res.status(401).json({ error: 'Invalid token' })
