@@ -1,6 +1,6 @@
 import { db } from '../db/database.js'
 import { collectiontable } from '../db/schema.js'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, like, sql } from 'drizzle-orm'
 
 export const getOneCollection = async (req, res) => {
     try {
@@ -11,7 +11,7 @@ export const getOneCollection = async (req, res) => {
             .where(eq(collectiontable.collection_id, id))
             .get()
 
-        if (collectionData.length == 0) {
+        if (!collectionData) {
             return res.status(409).json({ error: "Collection doesn't exist" })
         }
         if (!collectionData.is_public && collectionData.author_id !== req.user.id) {
@@ -34,8 +34,9 @@ export const getUserCollection = async (req, res) => {
         const collectionData = await db.select()
             .from(collectiontable)
             .where(eq(collectiontable.author_id, req.user.id))
+            .get()
 
-        if (collectionData.length == 0) {
+        if (!collectionData) {
             return res.status(409).json({ error: "You don't have any collections" })
         }
         console.log(collectionData)
@@ -47,12 +48,13 @@ export const getUserCollection = async (req, res) => {
 
 export const getPublicCollection = async (req, res) => {
     try {
+        const { title } = req.params
         const collectionData = await db.select()
             .from(collectiontable)
-            .where(eq(collectiontable.is_public, true))
-
-        if (collectionData.length == 0) {
-            return res.status(409).json({ error: "there are no public collections" })
+            .where(and(eq(collectiontable.is_public, true), like(sql`lower(${collectiontable.title})`, `%${title.toLowerCase()}%`)))
+            .get()
+        if (!collectionData) {
+            return res.status(409).json({ error: "there are no public collections with this title" })
         }
         console.log(collectionData)
         return res.status(201).json({ collectionData })
@@ -66,8 +68,11 @@ export const createCollection = async (req, res) => {
     try {
         const { title, description, is_public } = req.body
         console.log(req.body)
-        const existing = await db.select().from(collectiontable).where(and(eq(collectiontable.title, title), eq(collectiontable.author_id, req.user.id)))
-        if (existing.length > 0) {
+        const existing = await db.select()
+            .from(collectiontable)
+            .where(and(eq(collectiontable.title, title), eq(collectiontable.author_id, req.user.id)))
+            .get()
+        if (existing) {
             return res.status(409).json({ error: 'a collection with this title already exists' })
         }
         const collection = {
@@ -77,8 +82,8 @@ export const createCollection = async (req, res) => {
             is_public,
         }
         console.log(collection)
-        await db.insert(collectiontable).values(collection)
-        return res.status(201).json({ message: 'Collection created successfully' })
+        const newCollection = await db.insert(collectiontable).values(collection).returning()
+        return res.status(201).json({ message: 'Collection created successfully', newCollection })
     } catch (error) {
         return res.status(500).json({ error: 'Failed to create collection' })
     }
@@ -87,11 +92,14 @@ export const createCollection = async (req, res) => {
 
 export const updateCollection = async (req, res) => {
     try {
-        const { id } = req.params 
+        const { id } = req.params
         const { title, description, is_public } = req.body
         console.log(req.body)
-        const existing = await db.select().from(collectiontable).where(eq(collectiontable.collection_id, id))
-        if (existing.length < 1) {
+        const existing = await db.select()
+            .from(collectiontable)
+            .where(eq(collectiontable.collection_id, id))
+            .get()
+        if (!existing) {
             return res.status(409).json({ error: 'a collection with this id does not exists' })
         }
         const collection = {
@@ -114,8 +122,12 @@ export const deleteCollection = async (req, res) => {
         const collection = await db.select()
             .from(collectiontable)
             .where(and(eq(collectiontable.collection_id, id), eq(collectiontable.author_id, req.user.id)))
-        if (collection.length == 0) {
-            return res.status(409).json({ error: 'you cannot delete this collection' })
+            .get()
+        if (!collection) {
+            return res.status(404).json({ error: 'Collection does not exist' })
+        }
+        if (collection.author_id !== req.user.id) {
+            return res.status(403).json({ error: 'You can only delete your own collections' })
         }
         console.log(collection)
         await db.delete(collectiontable).where(eq(collectiontable.collection_id, id))

@@ -1,8 +1,9 @@
 ### Variables
 @baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRiYmI2MjMxLWZkOWYtNGYyNC1hOWQzLWM2N2E3NTI3N2I1MiIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJmaXJzdE5hbWUiOiJKb2huIiwibmFtZSI6IkRvZSIsImlhdCI6MTc2NTk1NjA0OSwiZXhwIjoxNzY1OTU5NjQ5fQ.3gCjVUxVPqvHQO11_i5Oktral9NuQ-F-Psksu0EIMYU
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRiYmI2MjMxLWZkOWYtNGYyNC1hOWQzLWM2N2E3NTI3N2I1MiIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJmaXJzdE5hbWUiOiJKb2huIiwibmFtZSI6IkRvZSIsImlhdCI6MTc2NTk1ODYyOSwiZXhwIjoxNzY1OTYyMjI5fQ.zSSAOpIUjVdZ2rHmecQ-CpKNb2pOQUSaHRIY2kxcMcI
 
-@CollectionId = abee91e7-1358-4ff0-a8cf-bbcd0ffc0485
+@CollectionId = e1b599cd-1a09-4aec-a364-891adb967dc2
+@CardId = b820cb96-ee14-4f67-8754-3807ed42fe09
 ### ============================================
 ### AUTH ROUTES
 ### ============================================
@@ -36,7 +37,7 @@ GET {{baseUrl}}/collections/user/
 Authorization: Bearer {{token}}
 
 ### Get all public collections
-GET {{baseUrl}}/collections/public/
+GET {{baseUrl}}/collections/public/PuBliC
 Authorization: Bearer {{token}}
 
 ### Create a new collection (private)
@@ -78,6 +79,31 @@ Authorization: Bearer {{token}}
 
 ### Delete a collection
 DELETE {{baseUrl}}/collections/{{CollectionId}}
+Authorization: Bearer {{token}}
+
+### ============================================
+### CARD ROUTES (Require Authentication)
+### ============================================
+
+### create a new card
+POST {{baseUrl}}/cards/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "recto": "What is the capital of France?",
+  "verso": "Paris",
+  "recto_url": "https://a.travel-assets.com/findyours-php/viewfinder/images/res70/474000/474240-Left-Bank-Paris.jpg",
+  "verso_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/CAMOU%2C_g%C3%A9n%C3%A9ral_Jacques%2C_Le_Gray%2C_Gallica.jpg/960px-CAMOU%2C_g%C3%A9n%C3%A9ral_Jacques%2C_Le_Gray%2C_Gallica.jpg",
+  "collection_id": "{{CollectionId}}"
+}
+
+### Get a specific card by ID
+GET {{baseUrl}}/cards/{{CardId}}
+Authorization: Bearer {{token}}
+
+### Delete a specific card by ID
+DELETE {{baseUrl}}/cards/{{CardId}}
 Authorization: Bearer {{token}}
 
 ### ============================================
