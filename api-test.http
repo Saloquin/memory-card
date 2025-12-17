@@ -1,0 +1,130 @@
+### Variables
+@baseUrl = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRiYmI2MjMxLWZkOWYtNGYyNC1hOWQzLWM2N2E3NTI3N2I1MiIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJmaXJzdE5hbWUiOiJKb2huIiwibmFtZSI6IkRvZSIsImlhdCI6MTc2NTk1NjA0OSwiZXhwIjoxNzY1OTU5NjQ5fQ.3gCjVUxVPqvHQO11_i5Oktral9NuQ-F-Psksu0EIMYU
+
+@CollectionId = abee91e7-1358-4ff0-a8cf-bbcd0ffc0485
+### ============================================
+### AUTH ROUTES
+### ============================================
+
+### Register a new user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123",
+  "name": "Doe",
+  "firstName": "John"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### ============================================
+### COLLECTION ROUTES (Require Authentication)
+### ============================================
+
+### Get user's collections
+GET {{baseUrl}}/collections/user/
+Authorization: Bearer {{token}}
+
+### Get all public collections
+GET {{baseUrl}}/collections/public/
+Authorization: Bearer {{token}}
+
+### Create a new collection (private)
+POST {{baseUrl}}/collections/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "My First Collection",
+  "description": "This is a test collection",
+  "is_public": false
+}
+
+### Create a new collection (public)
+POST {{baseUrl}}/collections/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Public Collection",
+  "description": "This is a public collection",
+  "is_public": true
+}
+
+### Get a specific collection by ID
+GET {{baseUrl}}/collections/{{CollectionId}}
+Authorization: Bearer {{token}}
+
+### Update a collection
+PUT {{baseUrl}}/collections/{{CollectionId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Updated Collection Title",
+  "description": "Updated description",
+  "is_public": true
+}
+
+### Delete a collection
+DELETE {{baseUrl}}/collections/{{CollectionId}}
+Authorization: Bearer {{token}}
+
+### ============================================
+### TEST SCENARIOS
+### ============================================
+
+### Register another user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "user2@example.com",
+  "password": "password456",
+  "name": "Smith",
+  "firstName": "Jane"
+}
+
+### Test duplicate email registration (should fail with 409)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123",
+  "name": "Duplicate",
+  "firstName": "User"
+}
+
+### Test login with wrong password (should fail with 401)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "wrongpassword"
+}
+
+### Test accessing collection without token (should fail)
+GET {{baseUrl}}/collections/user/
+
+### Test creating collection with duplicate title (should fail with 409)
+POST {{baseUrl}}/collections/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "My First Collection",
+  "description": "Duplicate title",
+  "is_public": false
+}

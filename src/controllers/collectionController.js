@@ -1,8 +1,6 @@
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
 import { db } from '../db/database.js'
-import { collectiontable, usertable } from '../db/schema.js'
-import { eq } from 'drizzle-orm'
+import { collectiontable } from '../db/schema.js'
+import { eq, and } from 'drizzle-orm'
 
 export const getOneCollection = async (req, res) => {
     try {
@@ -68,7 +66,7 @@ export const createCollection = async (req, res) => {
     try {
         const { title, description, is_public } = req.body
         console.log(req.body)
-        const existing = await db.select().from(collectiontable).where(eq(collectiontable.title, title))
+        const existing = await db.select().from(collectiontable).where(and(eq(collectiontable.title, title), eq(collectiontable.author_id, req.user.id)))
         if (existing.length > 0) {
             return res.status(409).json({ error: 'a collection with this title already exists' })
         }
@@ -87,26 +85,25 @@ export const createCollection = async (req, res) => {
 }
 
 
-//TODO
 export const updateCollection = async (req, res) => {
     try {
+        const { id } = req.params 
         const { title, description, is_public } = req.body
         console.log(req.body)
-        const existing = await db.select().from(collectiontable).where(eq(collectiontable.title, title))
-        if (existing.length > 0) {
-            return res.status(409).json({ error: 'a collection with this title already exists' })
+        const existing = await db.select().from(collectiontable).where(eq(collectiontable.collection_id, id))
+        if (existing.length < 1) {
+            return res.status(409).json({ error: 'a collection with this id does not exists' })
         }
         const collection = {
             title,
             description,
-            author_id: req.user.id,
             is_public,
         }
         console.log(collection)
-        await db.insert(collectiontable).values(collection)
-        return res.status(201).json({ message: 'Collection created successfully' })
+        await db.update(collectiontable).set(collection).where(eq(collectiontable.collection_id, id))
+        return res.status(201).json({ message: 'Collection updated successfully' })
     } catch (error) {
-        return res.status(500).json({ error: 'Failed to create collection' })
+        return res.status(500).json({ error: 'Failed to update collection' })
     }
 }
 
@@ -114,10 +111,10 @@ export const deleteCollection = async (req, res) => {
     try {
         const { id } = req.params
         console.log(req.params)
-        const existing = await db.select()
+        const collection = await db.select()
             .from(collectiontable)
             .where(and(eq(collectiontable.collection_id, id), eq(collectiontable.author_id, req.user.id)))
-        if (existing.length > 0) {
+        if (collection.length == 0) {
             return res.status(409).json({ error: 'you cannot delete this collection' })
         }
         console.log(collection)
