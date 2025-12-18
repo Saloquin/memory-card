@@ -4,6 +4,7 @@ import logger from "./middleware/logger.js"
 import authRoutes from "./routers/authRouter.js"
 import collectionRoutes from "./routers/collectionRouter.js"
 import cardRoutes from "./routers/cardRouter.js"
+import reviewRoutes from "./routers/reviewRouter.js"
 
 const PORT = 3000
 const app = express();
@@ -15,6 +16,7 @@ app.use(logger)
 app.use('/auth',authRoutes)
 app.use('/collections',collectionRoutes)
 app.use('/cards',cardRoutes)
+app.use('/reviews',reviewRoutes)
 
 app.listen(PORT, 'localhost', () => {
     console.log(`Server running at http://localhost:${PORT}/`);

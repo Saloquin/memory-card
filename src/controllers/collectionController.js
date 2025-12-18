@@ -97,7 +97,7 @@ export const updateCollection = async (req, res) => {
         console.log(req.body)
         const existing = await db.select()
             .from(collectiontable)
-            .where(eq(collectiontable.collection_id, id))
+            .where(and(eq(collectiontable.collection_id, id), eq(collectiontable.author_id, req.user.id)))
             .get()
         if (!existing) {
             return res.status(409).json({ error: 'a collection with this id does not exists' })

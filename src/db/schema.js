@@ -37,13 +37,9 @@ export const revisiontable = sqliteTable('Revision', {
     user_id: text({length: 36}).notNull().references(() => usertable.user_id),
     level_id: integer().notNull().references(() => leveltable.level_id),
     last_revision_date: integer({mode: 'timestamp'}).notNull()
-}, (table) => ({
-    pk: primaryKey({columns: [table.card_id, table.user_id]})
-}))
+})
 
 export const collectionaccesstable = sqliteTable('CollectionAccess', {
     user_id: text({length: 36}).notNull().references(() => usertable.user_id),
     collection_id: text({length: 36}).notNull().references(() => collectiontable.collection_id)
-}, (table) => ({
-    pk: primaryKey({columns: [table.user_id, table.collection_id]})
-}))
+})

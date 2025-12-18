@@ -1,9 +1,9 @@
 ### Variables
 @baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRiYmI2MjMxLWZkOWYtNGYyNC1hOWQzLWM2N2E3NTI3N2I1MiIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJmaXJzdE5hbWUiOiJKb2huIiwibmFtZSI6IkRvZSIsImlhdCI6MTc2NTk1ODYyOSwiZXhwIjoxNzY1OTYyMjI5fQ.zSSAOpIUjVdZ2rHmecQ-CpKNb2pOQUSaHRIY2kxcMcI
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRiYmI2MjMxLWZkOWYtNGYyNC1hOWQzLWM2N2E3NTI3N2I1MiIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJmaXJzdE5hbWUiOiJKb2huIiwibmFtZSI6IkRvZSIsImlhdCI6MTc2NjA3MjAzOCwiZXhwIjoxNzY2MDc1NjM4fQ.9hPuV1gbiPetJYlS3RsxqTjl6-3WcETJgBr4EJzz_qs
 
-@CollectionId = e1b599cd-1a09-4aec-a364-891adb967dc2
-@CardId = b820cb96-ee14-4f67-8754-3807ed42fe09
+@CollectionId = e41dc33a-1b87-42f0-9b2e-baded667f34c
+@CardId = 9ba5affb-48b5-4919-beec-cad622db1e1c
 ### ============================================
 ### AUTH ROUTES
 ### ============================================
@@ -46,7 +46,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "title": "My First Collection",
+  "title": "My second Collection",
   "description": "This is a test collection",
   "is_public": false
 }
@@ -102,9 +102,72 @@ Authorization: Bearer {{token}}
 GET {{baseUrl}}/cards/{{CardId}}
 Authorization: Bearer {{token}}
 
+### Update a card
+PUT {{baseUrl}}/cards/{{CardId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "recto": "What is the capital of Germany?",
+  "verso": "Berlin",
+  "recto_url": "https://example.com/germany.jpg",
+  "verso_url": "https://example.com/berlin.jpg"
+}
+
+### Get cards from a collection
+GET {{baseUrl}}/cards/collection/{{CollectionId}}
+Authorization: Bearer {{token}}
+
 ### Delete a specific card by ID
 DELETE {{baseUrl}}/cards/{{CardId}}
 Authorization: Bearer {{token}}
+
+### ============================================
+### REVIEW ROUTES (Require Authentication)
+### ============================================
+
+### Get cards to review from a collection
+GET {{baseUrl}}/reviews/collection/{{CollectionId}}/review
+Authorization: Bearer {{token}}
+
+### Review a card (first time)
+POST {{baseUrl}}/reviews/{{CardId}}/review
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "level_id": 3
+}
+
+### Review a card (update existing review)
+POST {{baseUrl}}/reviews/{{CardId}}/review
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "level_id": 5
+}
+
+### Test review with invalid level (should fail)
+POST {{baseUrl}}/reviews/{{CardId}}/review
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "level_id": 6
+}
+
+### Test review with invalid card ID (should fail)
+POST {{baseUrl}}/reviews/00000000-0000-0000-0000-000000000000/review
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "level_id": 3
+}
+
+### Test get cards to review without authentication (should fail)
+GET {{baseUrl}}/reviews/collection/{{CollectionId}}/review
 
 ### ============================================
 ### TEST SCENARIOS

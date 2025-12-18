@@ -1,7 +1,6 @@
-import { url } from 'zod'
 import { db } from '../db/database.js'
 import { cardtable, collectiontable } from '../db/schema.js'
-import { eq, and, ne } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 
 
 export const getOneCard = async (req, res) => {
@@ -36,11 +35,28 @@ export const getOneCard = async (req, res) => {
     }
 }
 export const getCardsByCollection = async (req, res) => {
+    try {
+        const { id } = req.params
+        console.log(req.params)
+        const data = await db.select()
+            .from(collectiontable)
+            .innerJoin(cardtable, eq(collectiontable.collection_id, cardtable.collection_id))
+            .where(eq(collectiontable.collection_id, id))
+            .get()
 
+        if (!data) {
+            return res.status(409).json({ error: "Collection doesn't exist" })
+        }
+        if (!data.Collection.is_public && data.Collection.author_id !== req.user.id) {
+            return res.status(403).json({ error: 'Access denied to this collection' })
+        }
+        const cards = data.Card;
+        return res.status(201).json({ cards })
+    } catch (error) {
+        return res.status(500).json({ error: 'Failed to retrieve collection', error })
+    }
 }
-export const getCardsToReview = async (req, res) => {
 
-}
 export const createCard = async (req, res) => {
     try {
         const { recto, verso, recto_url, verso_url, collection_id } = req.body
@@ -73,11 +89,37 @@ export const createCard = async (req, res) => {
         return res.status(500).json({ error: 'Failed to create card' })
     }
 }
-export const updateCard = async (req, res) => {
 
+export const updateCard = async (req, res) => {
+    try {
+        const { id } = req.params
+        const { recto, verso, recto_url, verso_url } = req.body
+        console.log(req.body)
+        const existing = await db.select()
+            .from(cardtable)
+            .innerJoin(collectiontable, eq(cardtable.collection_id, collectiontable.collection_id))
+            .where(eq(cardtable.card_id, id))
+            .get()
+        if (!existing) {
+            return res.status(409).json({ error: 'a card with this id does not exists' })
+        }
+        if (existing.Collection.author_id !== req.user.id) {
+            return res.status(403).json({ error: 'You can only update cards from your own collections' })
+        }
+        const card = {
+            recto,
+            verso,
+            url_recto: recto_url,
+            url_verso: verso_url
+        }
+        console.log(card)
+        await db.update(cardtable).set(card).where(eq(cardtable.card_id, id))
+        return res.status(201).json({ message: 'Card updated successfully' })
+    } catch (error) {
+        return res.status(500).json({ error: 'Failed to update card' })
+    }
 }
 
-//TODO don't work yet
 export const deleteCard = async (req, res) => {
     try {
         const { id } = req.params
@@ -103,9 +145,5 @@ export const deleteCard = async (req, res) => {
         return res.status(500).json({ error: 'Failed to delete card' })
     }
 }
-export const reviewCard = async (req, res) => {
-
-}
-
 
 
