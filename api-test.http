@@ -1,9 +1,10 @@
 ### Variables
 @baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRiYmI2MjMxLWZkOWYtNGYyNC1hOWQzLWM2N2E3NTI3N2I1MiIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlzQWRtaW4iOmZhbHNlLCJmaXJzdE5hbWUiOiJKb2huIiwibmFtZSI6IkRvZSIsImlhdCI6MTc2NjA3MjAzOCwiZXhwIjoxNzY2MDc1NjM4fQ.9hPuV1gbiPetJYlS3RsxqTjl6-3WcETJgBr4EJzz_qs
-
-@CollectionId = e41dc33a-1b87-42f0-9b2e-baded667f34c
-@CardId = 9ba5affb-48b5-4919-beec-cad622db1e1c
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MzM2YjlmLTc5MWUtNGUzOS1hMTMzLTkxODNmM2YxODdlNiIsImVtYWlsIjoidGVzdDJAZXhhbXBsZS5jb20iLCJpc0FkbWluIjpmYWxzZSwiZmlyc3ROYW1lIjoiSm9obiIsIm5hbWUiOiJEb2UiLCJpYXQiOjE3NjYzMTU1NTQsImV4cCI6MTc2NjMxOTE1NH0.MhFk6ycx0KZ-WtvWEdCDRZNMsKoP5YgvPrkGj2xFUCo
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA3Y2RmODBmLTU4NDUtNGM2Yy1iZWFlLWFlYjAzZThhMzYwYSIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlzQWRtaW4iOnRydWUsImZpcnN0TmFtZSI6IkpvaG4iLCJuYW1lIjoiRG9lIiwiaWF0IjoxNzY2MzE1Njk1LCJleHAiOjE3NjYzMTkyOTV9._liZygN8vB9uvrgFvStlgEFo4kgm4mdQdpbYl6aOY0c
+@CollectionId = 82ec2043-9f46-431c-a088-9de985f17945
+@CardId = 317d9521-c959-4d3b-8333-db31ddcc04bd
+@userId = 67336b9f-791e-4e39-a133-9183f3f187e6
 ### ============================================
 ### AUTH ROUTES
 ### ============================================
@@ -13,7 +14,7 @@ POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "email": "test@example.com",
+  "email": "test2@example.com",
   "password": "password123",
   "name": "Doe",
   "firstName": "John"
@@ -217,3 +218,42 @@ Authorization: Bearer {{token}}
   "description": "Duplicate title",
   "is_public": false
 }
+
+### ============================================
+### USER ROUTES (Admin Only)
+### ============================================
+
+### Get all users
+GET {{baseUrl}}/users/
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+### Get a specific user by ID
+GET {{baseUrl}}/users/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+### Delete a user
+DELETE {{baseUrl}}/users/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+### Test get all users without admin (should fail with 403)
+GET {{baseUrl}}/users/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### Test get user without admin (should fail with 403)
+GET {{baseUrl}}/users/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### Test delete user without admin (should fail with 403)
+DELETE {{baseUrl}}/users/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### Test get user with invalid ID (should fail with 400)
+GET {{baseUrl}}/users/invalid-id
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}

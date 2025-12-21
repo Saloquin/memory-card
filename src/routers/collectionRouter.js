@@ -1,18 +1,38 @@
 import { Router } from "express";
-import { getOneCollection,getUserCollection,getPublicCollection,createCollection,updateCollection,deleteCollection} from "../controllers/collectionController.js";
-import { validateBody, validateParams } from "../middleware/validation.js";
-import { createCollectionSchema, collectionIdSchema ,collectionTitleSchema} from "../models/collection.js";
+import {
+  createCollection,
+  deleteCollection,
+  getOneCollection,
+  getPublicCollection,
+  getUserCollection,
+  updateCollection,
+} from "../controllers/collectionController.js";
 import checkToken from "../middleware/checkToken.js";
+import {
+  collectionIdSchema,
+  collectionTitleSchema,
+  createCollectionSchema,
+} from "../models/collection.js";
+import { validateBody, validateParams } from "../utils/validation.js";
 
-const router = Router()
+const router = Router();
 
-router.use(checkToken)
+router.use(checkToken);
 
-router.get('/user/', getUserCollection)
-router.get('/public/:title',validateParams(collectionTitleSchema), getPublicCollection)
-router.post('/', validateBody(createCollectionSchema), createCollection)
-router.put('/:id', validateBody(createCollectionSchema),validateParams(collectionIdSchema), updateCollection)
-router.delete('/:id', validateParams(collectionIdSchema), deleteCollection)
-router.get('/:id', validateParams(collectionIdSchema), getOneCollection)
+router.get("/user/", getUserCollection);
+router.get(
+  "/public/:title",
+  validateParams(collectionTitleSchema),
+  getPublicCollection
+);
+router.post("/", validateBody(createCollectionSchema), createCollection);
+router.put(
+  "/:id",
+  validateBody(createCollectionSchema),
+  validateParams(collectionIdSchema),
+  updateCollection
+);
+router.delete("/:id", validateParams(collectionIdSchema), deleteCollection);
+router.get("/:id", validateParams(collectionIdSchema), getOneCollection);
 
-export default router
+export default router;
