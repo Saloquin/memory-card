@@ -16,7 +16,7 @@ export const getAllUsers = async (req, res) => {
       .from(usertable)
       .orderBy(desc(usertable.created_at));
 
-    return res.status(200).json({ users });
+    return res.status(200).json(users);
   } catch (error) {
     return res.status(500).json({ error: "Failed to retrieve users" });
   }

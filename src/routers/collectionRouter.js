@@ -12,6 +12,7 @@ import {
   collectionIdSchema,
   collectionTitleSchema,
   createCollectionSchema,
+  updateCollectionSchema,
 } from "../models/collection.js";
 import { validateBody, validateParams } from "../utils/validation.js";
 
@@ -28,7 +29,7 @@ router.get(
 router.post("/", validateBody(createCollectionSchema), createCollection);
 router.put(
   "/:id",
-  validateBody(createCollectionSchema),
+  validateBody(updateCollectionSchema),
   validateParams(collectionIdSchema),
   updateCollection
 );

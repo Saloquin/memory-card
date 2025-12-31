@@ -56,7 +56,9 @@ export const revisiontable = sqliteTable("Revision", {
     .notNull()
     .references(() => leveltable.level_id),
   last_revision_date: integer({ mode: "timestamp" }).notNull(),
-});
+}, (table) => ({
+  pk: { primaryKey: { columns: [table.card_id, table.user_id] } }
+}));
 
 export const collectionaccesstable = sqliteTable("CollectionAccess", {
   user_id: text({ length: 36 })

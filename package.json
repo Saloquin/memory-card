@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "nodemon ./src/server.js",
     "start": "node ./src/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node tests/api.test.js",
+    "test:full": "npm run db:seed && npm run test",
+    "test:pipeline": "npm run db:push -- --force && npm run db:seed && npm run test",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "node ./src/db/seed.js"

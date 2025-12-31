@@ -7,7 +7,6 @@ import { eq } from 'drizzle-orm'
 export const registerUser = async (req, res) => {
     try {
         const { email,password,name,firstName} = req.body
-        console.log(req.body)
         const existing = await db.select().from(usertable).where(eq(usertable.email, email))
         if (existing.length > 0) {
             return res.status(409).json({ error: 'Email already registered' })
@@ -20,7 +19,6 @@ export const registerUser = async (req, res) => {
             first_name: firstName,
             password : passwordHash,
         }
-        console.log(user)
         await db.insert(usertable).values(user)
         return res.status(201).json({ message: 'User registered successfully' })
     } catch (error) {
