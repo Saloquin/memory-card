@@ -451,8 +451,6 @@ memory-card/
 ├── .gitignore
 ├── drizzle.config.js         # Configuration Drizzle
 ├── package.json
-├── IMPLEMENTATION_REPORT.md  # Rapport technique détaillé
-├── TESTING_GUIDE.md          # Guide de test
 └── README.md                 # Ce fichier
 ```
 
