@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import 'dotenv/config'
 import { db } from '../db/database.js'
 import { usertable } from '../db/schema.js'
 import { eq } from 'drizzle-orm'
@@ -37,14 +38,16 @@ export const loginUser = async (req, res) => {
           const valid = bcrypt.compareSync(password, user.password)
         if (!valid) return res.status(401).json({ error: 'Invalid credentials' })
         
-        const secret = process.env.JWT_SECRET || 'secret'
+        const secret = process.env.JWT_SECRET || 'default_jwt_secret_change_in_production'
+        const expiration = process.env.JWT_EXPIRATION || '1h'
+        
         const token = jwt.sign({ 
             id: user.user_id, 
             email: user.email, 
             isAdmin: user.is_admin,
             firstName: user.first_name,
             name: user.name
-        }, secret, { expiresIn: '1h' })
+        }, secret, { expiresIn: expiration })
         
         return res.status(200).json({
             user: {

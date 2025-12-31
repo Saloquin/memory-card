@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import 'dotenv/config';
 import authRoutes from "./routers/authRouter.js";
 import cardRoutes from "./routers/cardRouter.js";
 import collectionRoutes from "./routers/collectionRouter.js";
@@ -7,7 +8,7 @@ import reviewRoutes from "./routers/reviewRouter.js";
 import userRoutes from "./routers/userRouter.js";
 import logger from "./utils/logger.js";
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.use(cors());
