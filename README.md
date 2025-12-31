@@ -564,9 +564,8 @@ Ce projet est réalisé dans le cadre d'un projet académique à l'Université d
 
 Pour toute question ou problème :
 
-1. Consultez la [documentation technique](./IMPLEMENTATION_REPORT.md)
-2. Vérifiez les [issues GitHub](../../issues)
-3. Contactez l'encadrant du projet
+1. Vérifiez les [issues GitHub](../../issues)
+2. Contactez l'encadrant du projet
 
 ---
 
