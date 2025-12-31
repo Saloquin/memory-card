@@ -247,8 +247,6 @@ npm run test:full
 - ✅ **Administration** (5 tests) - Gestion utilisateurs (admin)
 - ✅ **Nettoyage** (2 tests) - Suppression ressources
 
-📖 **Guide détaillé** : Voir [TESTING_GUIDE.md](./TESTING_GUIDE.md)
-
 ---
 
 ## 📚 API Documentation
